@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+
+    <!-- Supporto PWA / Icona Installazione -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#121218">
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="app-wrapper">
+
+        <!-- HEADER / NAVBAR IN ALTO -->
+        <header class="navbar">
+            <div class="navbar-left">
+                <!-- Pulsante Home / Torna al Menu (nascosto di default nel menu principale) -->
+                <button id="btn-home" class="btn-icon hidden" onclick="mostraMenu()">
+                    🏠 Menu
+                </button>
+            </div>
+
+            <div class="navbar-center">
+                <h1 id="" style="font-size: 1.2rem; color: #3B82F6;">📋 Gestione Casa</h1>
+            </div>
+
+            <div class="navbar-center">
+                <h2 id="app-title2" style="font-size: 0.8rem; color: #fbf9f9;">SPsoft Versione 1.0</h2>
+            </div>
+
+
+
+            <div class="navbar-right" style="display: flex; gap: 8px; align-items: center;">
+                <!-- PULSANTE INSTALLAZIONE PWA -->
+                <button id="btn-install-app" class="btn btn-primary"
+                    style="display: none; padding: 6px 12px; font-size: 0.85rem;">
+                    📲 Installa
+                </button>
+            </div>
+        </header>
+
+        <!-- CONTENUTO PRINCIPALE -->
+        <main class="container">
+
+            <!-- VISTA MENU PRINCIPALE -->
+            <section id="vista-menu" class="vista">
+                <div class="menu-grid">
+                    <button class="card-menu" onclick="mostraModulo('scadenze')">
+                        <span class="icon">📅</span>
+                        <h3>Scadenze Casa</h3>
+                        <p>Bollette, tasse e scadenze ricorrenti</p>
+                    </button>
+
+                    <button class="card-menu" onclick="mostraModulo('scontrini')">
+                        <span class="icon">🧾</span>
+                        <h3>Scontrini & Garanzie</h3>
+                        <p>Archivio scontrini e garanzie oggetti</p>
+                    </button>
+
+                    <button class="card-menu" onclick="mostraModulo('salute')">
+                        <span class="icon">🏥</span>
+                        <h3>Visite & Salute</h3>
+                        <p>Appuntamenti medici e visite</p>
+                    </button>
+
+                    <button class="card-menu" onclick="mostraModulo('veicoli')">
+                        <span class="icon">🚗</span>
+                        <h3>Gestione Veicoli</h3>
+                        <p>Bollo, revisione e assicurazione</p>
+                    </button>
+
+                    <button class="card-menu" onclick="mostraModulo('report')">
+                        <span class="icon">🖨️</span>
+                        <h3>Report & Stampa</h3>
+                        <p>Stampa riepilogo generale</p>
+                    </button>
+
+                    <button class="card-menu" onclick="mostraModulo('guida')">
+                        <span class="icon">📖</span>
+                        <h3>Guida all'Uso</h3>
+                        <p>Istruzioni e consigli</p>
+                    </button>
+                </div>
+            </section>
+
+            <!-- VISTA 1: SCADENZE CASA -->
+            <section id="vista-scadenze" class="vista hidden">
+                <div class="toolbar">
+                    <button id="btn-nuova" class="btn btn-primary">+ Nuova Scadenza</button>
+                    <input type="text" id="input-cerca" placeholder="Cerca scadenza..." class="input-search">
+                </div>
+
+                <div class="filter-bar">
+                    <button class="btn-filter active" data-filter="Tutte">Tutte</button>
+                    <button class="btn-filter" data-filter="In Scadenza">In Scadenza</button>
+                    <button class="btn-filter" data-filter="Scadute">Scadute</button>
+                    <button class="btn-filter" data-filter="Pagate">Pagate</button>
+                </div>
+
+                <div class="stats-bar">
+                    <span>Scadute: <strong id="stat-scadute" style="color:#EF4444;">0</strong></span> |
+                    <span>Imminenti: <strong id="stat-imminenti" style="color:#F59E0B;">0</strong></span> |
+                    <span>Totale da Pagare: <strong id="stat-totale">0.00 €</strong></span>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Descrizione</th>
+                                <th>Data</th>
+                                <th>Importo</th>
+                                <th>Ricorrenza</th>
+                                <th>Pagato</th>
+                                <th>Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lista-scadenze"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- VISTA 2: SCONTRINI & GARANZIE -->
+            <section id="vista-scontrini" class="vista hidden">
+                <div class="toolbar">
+                    <button class="btn btn-primary" onclick="apriModalScontrino()">+ Nuovo Scontrino</button>
+                    <input type="text" id="input-cerca-scontrini" placeholder="Cerca prodotto o negozio..."
+                        class="input-search">
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Prodotto / Prezzo</th>
+                                <th>Data Acquisto</th>
+                                <th>Scadenza Garanzia</th>
+                                <th>Negozio / Note</th>
+                                <th>Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lista-scontrini"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- VISTA 3: VISITE & SALUTE -->
+            <section id="vista-salute" class="vista hidden">
+                <div class="toolbar">
+                    <button class="btn btn-primary" onclick="apriModalSalute()">+ Nuova Visita</button>
+                    <input type="text" id="input-cerca-salute" placeholder="Cerca visita o medico..."
+                        class="input-search">
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Visita</th>
+                                <th>Data / Ora</th>
+                                <th>Medico / Note</th>
+                                <th>Stato</th>
+                                <th>Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lista-salute"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- VISTA 4: GESTIONE VEICOLI -->
+            <section id="vista-veicoli" class="vista hidden">
+                <div class="toolbar">
+                    <button class="btn btn-primary" onclick="apriModalVeicolo()">+ Nuovo Veicolo</button>
+                    <input type="text" id="input-cerca-veicoli" placeholder="Cerca veicolo o targa..."
+                        class="input-search">
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Veicolo / Targa</th>
+                                <th>Scadenza Bollo</th>
+                                <th>Scadenza Revisione</th>
+                                <th>Scadenza Assicurazione</th>
+                                <th>Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lista-veicoli"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- VISTA REPORT -->
+            <section id="vista-report" class="vista hidden">
+                <div id="contenitore-report"></div>
+            </section>
+
+            <!-- VISTA 6: GUIDA ALL'USO -->
+            <section id="vista-guida" class="vista hidden">
+                <div id="contenitore-guida"></div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- MODALI -->
+    <div id="modal-form" class="modal hidden">
+        <div class="modal-content">
+            <h2 id="modal-title">Nuova Scadenza</h2>
+            <form id="form-scadenza">
+                <input type="hidden" id="edit-id">
+                <label>Descrizione *</label>
+                <input type="text" id="field-descrizione" required>
+                <label>Data *</label>
+                <input type="date" id="field-data" required>
+                <label>Importo (€)</label>
+                <input type="number" step="0.01" id="field-importo">
+                <label>Ricorrenza</label>
+                <select id="field-ricorrenza">
+                    <option value="Nessuna">Nessuna</option>
+                    <option value="Mensile">Mensile</option>
+                    <option value="Bimestrale">Bimestrale</option>
+                    <option value="Trimestrale">Trimestrale</option>
+                    <option value="Semestrale">Semestrale</option>
+                    <option value="Annuale">Annuale</option>
+                </select>
+                <div id="group-pagato" style="display:none; margin-top:10px;">
+                    <label><input type="checkbox" id="field-pagato"> Già Pagato</label>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn btn-primary">Salva</button>
+                    <button type="button" id="btn-elimina" class="btn btn-danger" style="display:none;">Elimina</button>
+                    <button type="button" id="btn-annulla" class="btn btn-secondary">Annulla</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-scontrino" class="modal hidden">
+        <div class="modal-content">
+            <h2 id="modal-title-scontrino">Nuovo Scontrino</h2>
+            <form id="form-scontrino">
+                <input type="hidden" id="edit-id-scontrino">
+                <label>Prodotto *</label>
+                <input type="text" id="field-prodotto" required>
+                <label>Data Acquisto *</label>
+                <input type="date" id="field-data-acquisto" required>
+                <label>Mesi Garanzia</label>
+                <input type="number" id="field-mesi-garanzia" value="24">
+                <label>Negozio</label>
+                <input type="text" id="field-negozio">
+                <label>Prezzo (€)</label>
+                <input type="number" step="0.01" id="field-prezzo-scontrino">
+                <label>Note</label>
+                <textarea id="field-note-scontrino" rows="2"></textarea>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn btn-primary">Salva</button>
+                    <button type="button" id="btn-elimina-scontrino" class="btn btn-danger" onclick="eliminaScontrino()"
+                        style="display:none;">Elimina</button>
+                    <button type="button" class="btn btn-secondary" onclick="chiudiModalScontrino()">Annulla</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-salute" class="modal hidden">
+        <div class="modal-content">
+            <h2 id="modal-title-salute">Nuova Visita Medica</h2>
+            <form id="form-salute">
+                <input type="hidden" id="edit-id-salute">
+                <label>Visita / Esame *</label>
+                <input type="text" id="field-visita" required>
+                <label>Data *</label>
+                <input type="date" id="field-data-salute" required>
+                <label>Ora</label>
+                <input type="time" id="field-ora-salute">
+                <label>Medico / Struttura</label>
+                <input type="text" id="field-medico">
+                <label>Note</label>
+                <textarea id="field-note-salute" rows="2"></textarea>
+                <div id="group-effettuata" style="display:none; margin-top:10px;">
+                    <label><input type="checkbox" id="field-effettuata"> Visita Effettuata</label>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn btn-primary">Salva</button>
+                    <button type="button" id="btn-elimina-salute" class="btn btn-danger" onclick="eliminaSalute()"
+                        style="display:none;">Elimina</button>
+                    <button type="button" class="btn btn-secondary" onclick="chiudiModalSalute()">Annulla</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-veicolo" class="modal hidden">
+        <div class="modal-content">
+            <h2 id="modal-title-veicolo">Nuovo Veicolo</h2>
+            <form id="form-veicolo">
+                <input type="hidden" id="edit-id-veicolo">
+                <label>Nome Veicolo *</label>
+                <input type="text" id="field-nome-veicolo" placeholder="Es. Kia Venga, Scooter..." required>
+                <label>Tipo Veicolo</label>
+                <select id="field-tipo-veicolo">
+                    <option value="Auto">Auto</option>
+                    <option value="Camper">Camper</option>
+                    <option value="Scooter">Scooter</option>
+                    <option value="Moto">Moto</option>
+                    <option value="Altro">Altro</option>
+                </select>
+                <label>Targa</label>
+                <input type="text" id="field-targa-veicolo" placeholder="Es. AA123BB">
+                <label>Scadenza Bollo</label>
+                <input type="date" id="field-bollo-veicolo">
+                <label>Scadenza Revisione</label>
+                <input type="date" id="field-revisione-veicolo">
+                <label>Scadenza Assicurazione</label>
+                <input type="date" id="field-assicurazione-veicolo">
+                <label>Note</label>
+                <textarea id="field-note-veicolo" rows="2"></textarea>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn btn-primary">Salva</button>
+                    <button type="button" id="btn-elimina-veicolo" class="btn btn-danger" onclick="eliminaVeicolo()"
+                        style="display:none;">Elimina</button>
+                    <button type="button" class="btn btn-secondary" onclick="chiudiModalVeicolo()">Annulla</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPT JS -->
+    <script src="moduli/scadenze.js"></script>
+    <script src="moduli/scontrini.js"></script>
+    <script src="moduli/salute.js"></script>
+    <script src="moduli/veicoli.js"></script>
+    <script src="moduli/report.js"></script>
+    <script src="moduli/guida.js"></script>
+    <script src="app.js"></script>
+
+
+</body>
+
+</html>
